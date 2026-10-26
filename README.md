@@ -1,24 +1,30 @@
-# AI 自动切片：成片编辑与词库预设
+# AI 直播切片：成片编辑原型
 
-2026-10-20 发布版本，来源为当前工作副本的 `live-slice-prototype.html`。
+发布日期：2026-10-26。发布来源为 `Auto Live broadcast slice - copy 2026-10-23/live-slice-prototype.html` 的当前版本。
 
-- `index.html`：线上发布入口，默认打开「成片编辑」。
-- `live-slice-prototype.html`：完整可交互原型，与发布入口内容一致。
-- `assets/`：成片字幕编辑、发布页、演示封面与图标资源，打开原型时需要同目录提供。
-- `document.md` / `prd.html`：本次发布范围及实际功能说明。
-- `源码说明.md`：源码结构、存储与继续修改方式。
+## 入口
 
-本次交付覆盖「成片编辑」全部现有交互，以及「店铺预设 → 词库管理」（用户所称的词库预设）。两个页面共用页面框架、预设状态和业务脚本，因此保留完整可运行源码及关联入口。
+- `index.html`：在线入口，默认进入成片编辑。
+- `live-slice-prototype.html`：同内容的完整单文件原型，可直接下载并离线打开。
+- `document.md` / `prd.html`：当前功能说明。
+- `源码说明.md`：源码结构、导航与本地存储说明。
+- `source/` 与 `scripts/build_prototype.py`：可编辑的内嵌页面、页面增强代码和重打包工具。
 
-这是静态前端原型，无需安装依赖或构建。线上入口默认进入成片编辑；词库入口为「店铺预设 → 词库管理」。本地可直接打开 HTML，或使用静态 HTTP 服务。
+主页面、在线剪辑页、样式、封面和图标均内嵌在单文件中，无需安装依赖或启动服务。`assets/` 和 `online-edit/` 保留为项目配套源码；主入口使用文件内的打包资源。
 
-页面中的数据为演示数据，字幕、词库和发布草稿在当前浏览器本地保存。真实视频生成、平台发布、剪映草稿导出和 Excel 解析尚未接入；批量上传词库使用固定示例，模板下载显示演示提示。
+## 当前行为
+
+成片编辑展示 10 组演示素材、31 条成片。顶部将自动录屏开关、默认预设、搜索入口和展开的筛选条件整合为一个面板。搜索支持商品 ID、主播名称和发布状态，重置恢复全部成片。
+
+点击成片打开视频封面与字幕编辑弹窗，可逐条编辑、添加、删除字幕并保存，也可进入发布页。发布明细和「设置」菜单继续可用。在线剪辑页与发布页通过同一 HTML 的查询参数往返。移动端素材分组适配屏幕，成片卡片在组内横向滚动。
+
+这是静态前端原型。平台发布、下载、剪映草稿导出、素材重新生成等涉及服务端的操作为演示行为。演示数据和浏览器存储不构成真实后台服务。
 
 ## 发布位置
 
-- GitHub 仓库：https://github.com/p1466768763-blip/ai-auto-slice-shop-presets
+- GitHub：https://github.com/p1466768763-blip/ai-auto-slice-shop-presets
 - GitHub Pages：https://p1466768763-blip.github.io/ai-auto-slice-shop-presets/
-- Codeup：企业 `prd` 仓库下的 `ai-auto-slice-shop-presets-20261020/`。
-- 内部预览：https://prd.kmeila.com/ai-auto-slice-shop-presets-20261020/index.html （需要公司登录态）。
+- Codeup：https://codeup.aliyun.com/5f6d648d93de782518721633/prd/tree/master/ai-auto-slice-shop-presets-20261020
+- 内部预览：https://prd.kmeila.com/ai-auto-slice-shop-presets-20261020/index.html
 
-桌面另提供「成片编辑.html」和「词库预设.html」两个自包含导出文件，分别默认进入对应页面，样式、脚本和图片已内嵌。
+内部预览需要公司登录。浏览器本地状态按访问地址隔离，桌面文件与线上预览不会自动同步。

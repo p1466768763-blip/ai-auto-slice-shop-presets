@@ -1,4 +1,16 @@
 .clip-publish-page{--publish-accent:var(--pink);color:#303743;min-width:0}
+body.standalone-publish{background:#f6f6fa}
+.standalone-publish .sidebar,.standalone-publish .main>.top,.standalone-publish .content>.crumb,.standalone-publish #aiWorkspace>.ai-live-nav{display:none}
+.standalone-publish .main{width:100%}
+.standalone-publish .content{width:min(1180px,calc(100% - 48px));margin:14px auto 40px;padding:0}
+.standalone-publish #aiWorkspace{min-height:0;border:0;background:transparent;box-shadow:none}
+.standalone-publish #aiWorkspaceBody{padding:0}
+.standalone-publish .publish-page-heading{justify-content:flex-start;gap:8px;min-height:66px;margin-bottom:14px;padding:14px 16px;border:1px solid #e7ebf0;border-radius:16px;background:#ffffffeb;box-shadow:0 8px 24px #0f172a0a}
+.standalone-publish .publish-page-heading h2{font-size:18px;font-weight:650}
+.standalone-publish .publish-back{display:grid;place-items:center;flex:none;width:32px;height:32px;padding:0;border:1px solid #e7ebf0;border-radius:8px;background:#fff}
+.standalone-publish .publish-back:hover{background:#f7f8fa}
+.standalone-publish .publish-back:focus-visible{outline:2px solid #e94f95;outline-offset:3px}
+@media(max-width:700px){.standalone-publish .content{width:calc(100% - 24px);margin-top:12px}}
 .publish-page-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px}
 .publish-page-heading h2{font-size:17px;margin:0;font-weight:600}
 .publish-page-heading small{display:block;color:#909399;font-size:12px;font-weight:400;margin-top:5px}

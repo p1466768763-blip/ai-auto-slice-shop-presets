@@ -26,12 +26,10 @@ jobs:
       - name: Prepare static site
         run: |
           mkdir -p _site
-          cp index.html live-slice-prototype.html prd.html _site/
-          mkdir -p _site/assets
-          cp -R assets/. _site/assets/
+          cp index.html live-slice-prototype.html prd.html README.md document.md 源码说明.md _site/
+          cp -R assets online-edit source scripts _site/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
-

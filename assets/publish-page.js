@@ -30,18 +30,21 @@ function syncDemoPublishRecord(item, draft) {
   item.task.clips[item.index].published = published.timing !== 'scheduled';
   item.task.clips[item.index].productId = published.productId;
   const id = 'demo-' + item.task.id + '-' + item.index;
-  const row = [id, published.title, published.channels.join(' / '), published.timing === 'scheduled' ? published.scheduledAt.replace('T',' ') + ':00' : draft.submittedAt, published.timing === 'scheduled' ? '待定时发布（演示）' : '已发布（演示）', published.timing === 'scheduled' ? '0%' : '100%', '本地演示', item.task.id + '-' + item.index];
+  const row = [id, published.title, published.channels.map(channel=>channel==='主页视频'?'主页':channel==='千川素材'?'千川':channel).join(' / '), published.timing === 'scheduled' ? published.scheduledAt.replace('T',' ') + ':00' : draft.submittedAt, published.timing === 'scheduled' ? '待定时发布（演示）' : '已发布（演示）', published.timing === 'scheduled' ? '0%' : '100%', '本地演示', item.task.id + '-' + item.index];
   const index = data.record.rows.findIndex(r => r[0] === id);
   if (index >= 0) data.record.rows[index] = row; else data.record.rows.unshift(row);
 }
 
-function openClipPublish(index, source) {
+function openClipPublish(index, source, origin = 'highlight') {
+  const returnToEditor = origin === 'online-edit';
+  const backLabel = returnToEditor ? '返回在线编辑页' : '返回成片编辑';
   const item = allHighlightClips().find(clip => String(clip.task.id) === String(source) && clip.index === Number(index));
   if (!item) { toast('未找到这条视频'); return; }
-  if ($('#hlClipLive')) readHighlightFilterInputs();
+  if ($('#hlClipDate')) readHighlightFilterInputs();
   capturePresetDraft();
   active = 'publish';
   mountAIWorkspace('highlight');
+  document.body.classList.add('standalone-publish');
   $('#crumb').textContent = 'AI 直播切片 / 成片库 / 发布成片';
   const panel = $('#panel');
   const draft = readClipPublishDraft(item);
@@ -54,7 +57,7 @@ function openClipPublish(index, source) {
   try { subtitles = JSON.parse(localStorage.getItem(subtitleKey)); } catch {}
   const caption = subtitles?.enabled && Array.isArray(subtitles.lines) ? subtitles.lines.find(line => line.trim()) || '' : '';
   panel.innerHTML = `<section class="clip-publish-page" aria-labelledby="clipPublishTitle">
-    <header class="publish-page-heading"><h2 id="clipPublishTitle" tabindex="-1">发布成片<small>${escapeHtml(item.clipNumber)}</small></h2><button type="button" class="publish-back" id="publishBack">${publishIcon('arrow-left')}返回成片库</button></header>
+    <header class="publish-page-heading"><button type="button" class="publish-back" id="publishBack" aria-label="${backLabel}" title="${backLabel}">${publishIcon('arrow-left')}</button><h2 id="clipPublishTitle" tabindex="-1">发布成片<small>${escapeHtml(item.clipNumber)}</small></h2></header>
     <div class="publish-layout">
       <aside class="publish-card publish-preview-card" aria-label="视频预览">
         <div class="publish-preview-head"><h3>视频预览</h3><button class="publish-icon-button" id="publishFullscreen" aria-label="全屏预览">${publishIcon('maximize')}</button></div>
@@ -125,7 +128,21 @@ function openClipPublish(index, source) {
       q(`[data-clear-cover="${ratio}"]`).hidden = !draft[ratio];
     }
   };
-  q('#publishBack').onclick = () => { if (!save(true)) return; currentClipPublish = null; renderHighlight(); };
+  q('#publishBack').onclick = () => {
+    if (!save(true)) return;
+    if (!returnToEditor) {
+      currentClipPublish = null;
+      const cleanUrl = new URL(location.href);
+      ['publish_task','publish_clip','publish_from'].forEach(key => cleanUrl.searchParams.delete(key));
+      history.replaceState(null,'',cleanUrl.href);
+      renderHighlight();
+      return;
+    }
+    const target = new URL('online-edit/index.html', document.baseURI);
+    target.searchParams.set('task', item.task.id);
+    target.searchParams.set('clip', item.index);
+    window.location.href = target.href;
+  };
   q('#publishSaveDraft').onclick = () => save();
   q('#clipPublishForm').oninput = collect;
   q('#clipPublishForm').onchange = collect;
@@ -225,4 +242,4 @@ document.addEventListener('clip-subtitles-saved', event => {
 });
 if (data.record.rows.some(r => r[0].startsWith('demo-'))) renderHighlight();
 const publishDeepLink = new URLSearchParams(location.search);
-if (publishDeepLink.has('publish_task') && publishDeepLink.has('publish_clip')) openClipPublish(publishDeepLink.get('publish_clip'),publishDeepLink.get('publish_task'));
+if (publishDeepLink.has('publish_task') && publishDeepLink.has('publish_clip')) openClipPublish(publishDeepLink.get('publish_clip'),publishDeepLink.get('publish_task'),publishDeepLink.get('publish_from') || 'highlight');
